@@ -1,10 +1,9 @@
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.models.ticket import Ticket
+from app.db.repositories import TicketRepository
 from app.models.ticket_schema import (
     TicketCreate,
     TicketResponse,
@@ -17,6 +16,10 @@ router = APIRouter(
 )
 
 
+def get_repository(db: Session = Depends(get_db)):
+    return TicketRepository(db)
+
+
 @router.post(
     "",
     response_model=TicketResponse,
@@ -24,32 +27,24 @@ router = APIRouter(
 )
 def create_ticket(
     ticket: TicketCreate,
-    db: Session = Depends(get_db),
+    repo: TicketRepository = Depends(get_repository),
 ):
-    db_ticket = Ticket(**ticket.model_dump())
-
-    db.add(db_ticket)
-    db.commit()
-    db.refresh(db_ticket)
-
-    return db_ticket
+    return repo.create(ticket)
 
 
 @router.get("", response_model=list[TicketResponse])
-def list_tickets(db: Session = Depends(get_db)):
-    statement = select(Ticket).order_by(
-        Ticket.created_at.desc()
-    )
-
-    return db.scalars(statement).all()
+def list_tickets(
+    repo: TicketRepository = Depends(get_repository),
+):
+    return repo.get_all()
 
 
 @router.get("/{ticket_id}", response_model=TicketResponse)
 def get_ticket(
     ticket_id: int,
-    db: Session = Depends(get_db),
+    repo: TicketRepository = Depends(get_repository),
 ):
-    ticket = db.get(Ticket, ticket_id)
+    ticket = repo.get_by_id(ticket_id)
 
     if ticket is None:
         raise HTTPException(
