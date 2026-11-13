@@ -283,12 +283,12 @@ Tests use isolated SQLite databases to prevent modification of development data.
 
 ## Project Scope
 
-SupportFlow is an independent educational and portfolio project. It uses synthetic infrastructure support scenarios and is not affiliated with, endorsed by, or integrated into Dell Technologies or any other infrastructure vendor.
+SupportFlow is an independent educational and portfolio project. It uses synthetic infrastructure support scenarios and is not affiliated with, endorsed by, or integrated into any infrastructure vendor.
 
 The project is not intended to execute operations against production infrastructure.
 
 ## License
-
+g
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
