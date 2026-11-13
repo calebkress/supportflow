@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 from app.main import app
 from app.db.database import Base, get_db
 from app.models.ticket import Ticket  # Register SQLAlchemy model
+from app.models.triage import TicketTriage
 
 
 @pytest.fixture

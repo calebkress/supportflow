@@ -2,6 +2,7 @@ from logging.config import fileConfig
 from app.config import settings
 from app.db.database import Base
 from app.models.ticket import Ticket 
+from app.models.triage import TicketTriage
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -20,7 +21,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
+# target_metadata = mymodel.Base.metadatapython3 -m venv .venvsource .venv/bin/activate
 target_metadata = Base.metadata
 
 config.set_main_option(

@@ -1,9 +1,14 @@
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from openai import OpenAIError
+
+from app.services.triage import TriageService
+from app.models.triage_schema import TriageResult
 
 from app.db.database import get_db
 from app.db.repositories import TicketRepository
+
 from app.models.ticket_schema import (
     TicketCreate,
     TicketResponse,
@@ -53,3 +58,36 @@ def get_ticket(
         )
 
     return ticket
+
+def get_triage_service():
+    return TriageService()
+
+
+@router.post(
+    "/{ticket_id}/triage",
+    response_model=TriageResult,
+)
+def triage_ticket(
+    ticket_id: int,
+    repo: TicketRepository = Depends(get_repository),
+    service: TriageService = Depends(get_triage_service),
+):
+    ticket = repo.get_by_id(ticket_id)
+
+    if ticket is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Ticket not found",
+        )
+
+    try:
+        result = service.classify(ticket)
+    except (OpenAIError, ValueError):
+        raise HTTPException(
+            status_code=502,
+            detail="Ticket classification failed",
+        )
+
+    repo.save_triage(ticket, result)
+
+    return result
