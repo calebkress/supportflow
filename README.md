@@ -288,7 +288,7 @@ SupportFlow is an independent educational and portfolio project. It uses synthet
 The project is not intended to execute operations against production infrastructure.
 
 ## License
-g
+
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
